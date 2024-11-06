@@ -1,4 +1,4 @@
-package com.example.WebScrapperApp.entities;
+package com.example.WebScrapperApp.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

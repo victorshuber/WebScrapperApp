@@ -3,7 +3,8 @@ package com.example.WebScrapperApp.components.constants;
 public enum UserRoles {
     CUSTOMER_ROLE("customer"),
     USER_ROLE("user"),
-    ADMIN_ROLE("admin");
+    ADMIN_ROLE("admin"),
+    ROOT("root");
 
     String role;
 

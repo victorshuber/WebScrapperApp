@@ -1,76 +1,74 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import Dashboard from './components/Dashboard';
-import Profile from './components/Profile';
-import Login from './components/Login';
-import Register from './components/Register';
-import './App.css';
+import React, { Component, Fragment, lazy, Suspense } from 'react';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import { ToastContainer, toast, Zoom } from 'react-toastify';
+import { connect } from 'react-redux';
+import { logoutAction } from './store/actions/authActions';
+import { Footer } from './components/common';
+import { userService } from './infrastructure';
+import Navbar from './components/common/NavBar';
+import { ToastComponent } from './components/common';
+import { CircleLoader } from 'react-spinners';
 
-function App() {
-  return (
-    <Router>
-      <div className="app">
-        {/* Боковое меню */}
-        <aside className="sidebar">
-          <h2>WEB SCRAPPER</h2>
-          <nav>
-            <ul>
-              <li><Link to="/home">Главная</Link></li>
-              <li><Link to="/profile">Личный кабинет</Link></li>
-            </ul>
-          </nav>
-        </aside>
+const StartPage = lazy(() => import('./components/pages/StartPage'))
+const HomePage = lazy(() => import('./components/pages/HomePage'))
+const RegisterPage = lazy(() => import('./components/pages/RegisterPage'))
+const LoginPage = lazy(() => import('./components/pages/LoginPage'))
+const ProfilePage = lazy(() => import('./components/pages/ProfilePage'))
+const ErrorPage = lazy(() => import('./components/pages/ErrorPage'))
 
-        {/* Основной контент */}
-        <div className="main-content">
-          <header className="top-nav">
-            <nav>
-              <ul>
-                <li><Link to="/home">Главная</Link></li>
-                <li><Link to="/profile">Личный кабинет</Link></li>
-              </ul>
-            </nav>
-          </header>
 
-          <div className="content">
-            <Routes>
-              <Route path="/home" element={<Dashboard />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-            </Routes>
-          </div>
-        </div>
-      </div>
-    </Router>
-  );
+class App extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.onLogout = this.onLogout.bind(this);
+  }
+
+  onLogout() {
+    this.props.logout();
+
+    toast.success(<ToastComponent.successToast text={`You have been successfully logged out.`} />, {
+      position: toast.POSITION.TOP_RIGHT
+    });
+
+    this.props.history.push('/login');
+  }
+
+  render() {
+    const loggedIn = userService.isTheUserLoggedIn();
+
+    return (
+      <Fragment>
+        <Navbar loggedIn={localStorage.getItem('token') != null} onLogout={this.onLogout} {...this.props} />
+        <ToastContainer transition={Zoom} closeButton={false} />
+        <Suspense fallback={
+          <div className='sweet-loading'>
+            <CircleLoader
+              // sizeunit={"px"}
+              size={150}
+              color={'#61dafb'}
+              loading={true}
+            />
+          </div>}>
+          <Switch>
+            <Route exact path="/" component={StartPage} />
+            {!loggedIn && <Route exact path="/register" component={RegisterPage} />}
+            {!loggedIn && <Route exact path="/login" component={LoginPage} />}
+            {loggedIn && <Route path="/home" component={HomePage} />}
+            <Route exact path="/error" component={ErrorPage} />
+            <Route component={ErrorPage} />
+          </Switch>
+        </Suspense>
+        <Footer />
+      </Fragment>
+    )
+  }
 }
 
-export default App;
-
-
-/* import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function mapDispatchToProps(dispatch) {
+  return {
+    logout: () => dispatch(logoutAction()),
+  }
 }
 
-export default App; */
+export default withRouter(connect(null, mapDispatchToProps)(App));

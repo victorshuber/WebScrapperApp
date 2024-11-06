@@ -1,4 +1,4 @@
-package com.example.WebScrapperApp.entities;
+package com.example.WebScrapperApp.domain.entities;
 
 
 import com.example.WebScrapperApp.components.constants.UserRoles;
@@ -27,6 +27,5 @@ public class UsersHib {
     private String userRole;
 
     private boolean isEnabled;
-
 
 }

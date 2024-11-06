@@ -1,15 +1,10 @@
 package com.example.WebScrapperApp.controller;
 
-import com.example.WebScrapperApp.entities.UsersHib;
+import com.example.WebScrapperApp.domain.entities.UsersHib;
+import com.example.WebScrapperApp.domain.models.userModels.UserLoginModel;
 import com.example.WebScrapperApp.service.IUserService;
-import com.example.WebScrapperApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -30,7 +25,9 @@ public class UserController {
     }
 
     @RequestMapping(value="/login", method= {RequestMethod.POST})
-    public String auth(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password) throws Exception {
+    public ResponseEntity<?> auth(@RequestBody UserLoginModel loginData) throws Exception {
+        String username = loginData.getUsername();
+        String password = loginData.getPassword();
         return iUserService.authenticateUser(username, password);
     }
 

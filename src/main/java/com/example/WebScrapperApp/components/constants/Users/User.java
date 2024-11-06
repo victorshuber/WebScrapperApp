@@ -1,6 +1,6 @@
 package com.example.WebScrapperApp.components.constants.Users;
 
-import com.example.WebScrapperApp.entities.UsersHib;
+import com.example.WebScrapperApp.domain.entities.UsersHib;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

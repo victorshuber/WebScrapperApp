@@ -1,11 +1,12 @@
 package com.example.WebScrapperApp.service;
 
 
-import com.example.WebScrapperApp.entities.UsersHib;
+import com.example.WebScrapperApp.domain.entities.UsersHib;
 import com.example.WebScrapperApp.repository.IConfirmationTokenRepository;
 import com.example.WebScrapperApp.repository.IUserRepository;
 import com.example.WebScrapperApp.security.SecurityUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class UserService implements IUserService, UserDetailsService {
@@ -61,25 +65,31 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     @Override
-    public String authenticateUser(String username, String password){
+    public ResponseEntity<Map<String, String>> authenticateUser(String username, String password) {
+
+        Map<String, String> response = new HashMap<>();
         try {
+            System.out.println("\nReceived username is: " + username + "\nReceived password is: " + password);
             UserDetails userDetails = loadUserByUsername(username);
 
-            if(passwordEncoder.matches(password, userDetails.getPassword())) {
+            if (passwordEncoder.matches(password, userDetails.getPassword())) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, userDetails.getAuthorities());
                 authentication.setDetails(userDetails);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-            else {
-                return "PASSWORD_NOT_MATCHES";
-            }
-        }
-        catch (UsernameNotFoundException ex) {
-            return "USER_NOT_FOUND";
-        }
 
-        return "OK";
-
+                // Success response with token
+                response.put("token", SecurityUserDetails.generateToken(username));
+                return ResponseEntity.ok(response);
+            } else {
+                // Password mismatch
+                response.put("message", "Error! Password did not match");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+        } catch (UsernameNotFoundException ex) {
+            // Username not found
+            response.put("message", "Error! Given user not found");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
     }
 
 
