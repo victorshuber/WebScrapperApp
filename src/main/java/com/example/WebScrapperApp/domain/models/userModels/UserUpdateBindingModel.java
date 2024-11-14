@@ -14,10 +14,8 @@ public class UserUpdateBindingModel implements Serializable {
     private String email;
     private String firstName;
     private String lastName;
-    private String address;
-    private String city;
+    private String country;
     private String profilePicUrl;
-    private String backgroundImageUrl;
 
     public UserUpdateBindingModel() {
     }
@@ -68,25 +66,12 @@ public class UserUpdateBindingModel implements Serializable {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
-    @NotNull(message = ValidationMessageConstants.USER_ADDRESS_REQUIRED_MESSAGE)
-    @Length(min = 1, message = ValidationMessageConstants.USER_ADDRESS_REQUIRED_MESSAGE)
-    public String getAddress() {
-        return this.address;
+    public String getCountry() {
+        return this.country;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    @NotNull(message = ValidationMessageConstants.USER_CITY_REQUIRED_MESSAGE)
-    @Length(min = 1, message = ValidationMessageConstants.USER_CITY_REQUIRED_MESSAGE)
-    public String getCity() {
-        return this.city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getProfilePicUrl() {
@@ -97,11 +82,4 @@ public class UserUpdateBindingModel implements Serializable {
         this.profilePicUrl = profilePicUrl;
     }
 
-    public String getBackgroundImageUrl() {
-        return this.backgroundImageUrl;
-    }
-
-    public void setBackgroundImageUrl(String backgroundImageUrl) {
-        this.backgroundImageUrl = backgroundImageUrl;
-    }
 }

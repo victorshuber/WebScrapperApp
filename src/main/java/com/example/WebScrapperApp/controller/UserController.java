@@ -2,6 +2,7 @@ package com.example.WebScrapperApp.controller;
 
 import com.example.WebScrapperApp.domain.entities.UsersHib;
 import com.example.WebScrapperApp.domain.models.userModels.UserLoginModel;
+import com.example.WebScrapperApp.domain.models.userModels.UserRegisterModel;
 import com.example.WebScrapperApp.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,8 @@ public class UserController {
     public IUserService iUserService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UsersHib user) {
-        return iUserService.saveUser(user);
+    public ResponseEntity<?> registerUser(@RequestBody UserRegisterModel registerData) {
+        return iUserService.saveUser(registerData);
     }
 
     @RequestMapping(value="/confirm-account", method= {RequestMethod.GET, RequestMethod.POST})

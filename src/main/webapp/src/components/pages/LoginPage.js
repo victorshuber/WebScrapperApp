@@ -23,11 +23,11 @@ class LoginPage extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        /* if (this.props.loginError.hasError && prevProps.loginError !== this.props.loginError) {
+        if (this.props.loginError.hasError && prevProps.loginError !== this.props.loginError) {
             toast.error(<ToastComponent.errorToast text={`${this.props.loginError.message}`} />, {
                 position: toast.POSITION.TOP_RIGHT
             });
-        } else  */if (this.props.loginSuccess) {
+        } else if (this.props.loginSuccess) {
             this.props.redirect();
 
             toast.success(<ToastComponent.successToast text={' You have successfully logged in!'} />, {

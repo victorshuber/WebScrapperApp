@@ -16,10 +16,8 @@ public class UserRegisterModel {
     private String confirmPassword;
     private String firstName;
     private String lastName;
-    private String address;
-    private String city;
+    private String country;
     private String profilePicUrl;
-    private String backgroundImageUrl;
 
     public UserRegisterModel() {
     }
@@ -80,14 +78,13 @@ public class UserRegisterModel {
         this.lastName = lastName;
     }
 
-    @NotNull(message = ValidationMessageConstants.USER_CITY_REQUIRED_MESSAGE)
-    @Length(min = 1, message = ValidationMessageConstants.USER_CITY_REQUIRED_MESSAGE)
-    public String getCity() {
-        return this.city;
+
+    public String getCountry() {
+        return this.country;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getProfilePicUrl() {
@@ -98,11 +95,4 @@ public class UserRegisterModel {
         this.profilePicUrl = profilePicUrl;
     }
 
-    public String getBackgroundImageUrl() {
-        return this.backgroundImageUrl;
-    }
-
-    public void setBackgroundImageUrl(String backgroundImageUrl) {
-        this.backgroundImageUrl = backgroundImageUrl;
-    }
 }

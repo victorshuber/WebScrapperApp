@@ -6,7 +6,7 @@ import ToastComponent from './ToastComponent';
 import './css/Navbar.css';
 
 import { connect } from 'react-redux';
-// import { searchResultsAction } from '../../store/actions/userActions';
+import { searchResultsAction } from '../../store/actions/userActions';
 
 class Navbar extends Component {
     constructor(props) {
@@ -54,10 +54,7 @@ class Navbar extends Component {
     }
 
      getSuccessMessage(prevProps) {
-        if (!this.props.fetchAllUnreadMessages.hasError && this.props.fetchAllUnreadMessages.message && this.props.fetchAllUnreadMessages !== prevProps.fetchAllUnreadMessages) {
-            return this.props.fetchAllLogs.message;
-        }
-        else if (!this.props.searchResultsData.hasError && this.props.searchResultsData.message && this.props.searchResultsData !== prevProps.searchResultsData) {
+        if (!this.props.searchResultsData.hasError && this.props.searchResultsData.message && this.props.searchResultsData !== prevProps.searchResultsData) {
             return this.props.searchResultsData.message;
         }
 
@@ -65,10 +62,7 @@ class Navbar extends Component {
     }
 
     getErrorMessage(prevProps) {
-        if (this.props.fetchAllUnreadMessages.hasError && prevProps.fetchAllUnreadMessages.error !== this.props.fetchAllUnreadMessages.error) {
-            return this.props.fetchAllUnreadMessages.message || 'Server Error';
-        }
-        else if (this.props.searchResultsData.hasError && prevProps.searchResultsData.error !== this.props.searchResultsData.error) {
+        if (this.props.searchResultsData.hasError && prevProps.searchResultsData.error !== this.props.searchResultsData.error) {
             return this.props.searchResultsData.message || 'Server Error';
         }
 
@@ -116,80 +110,82 @@ class Navbar extends Component {
                 <input type="checkbox" name="main-nav-toggle" id="main-nav-toggle" />
                 <header className="site-header">
                     <section className="navbar-section">
-                        <div className="navbar-wrapper">
-                            <div className="nav-searchbar-container">
-                                <div className="site-logo">
-                                    <NavLink to="/" className="nav-link " >Web-scrapper</NavLink>
+                        <div class="row">
+                            <div className="col-md-8 navbar-wrapper">
+                                <div className="nav-searchbar-container">
+                                    <div className="site-logo">
+                                        <NavLink to="/" className="nav-link " >Web-scrapper</NavLink>
+                                    </div>
+    {/*                                 {loggedIn && <form className="form-inline my-2 my-lg-0" onSubmit={this.searchFriend}>
+                                        <input
+                                            className="form-control mr-sm-2"
+                                            type="search"
+                                            placeholder="Search"
+                                            aria-label="Search"
+                                            name="search"
+                                            id="search"
+                                            value={this.state.search}
+                                            onChange={this.onChangeHandler}
+                                        />
+
+                                        <button className="btn button-navbar-outline my-2 my-sm-0" type="submit">Search</button>
+                                    </form>} */}
                                 </div>
-{/*                                 {loggedIn && <form className="form-inline my-2 my-lg-0" onSubmit={this.searchFriend}>
-                                    <input
-                                        className="form-control mr-sm-2"
-                                        type="search"
-                                        placeholder="Search"
-                                        aria-label="Search"
-                                        name="search"
-                                        id="search"
-                                        value={this.state.search}
-                                        onChange={this.onChangeHandler}
-                                    />
 
-                                    <button className="btn button-navbar-outline my-2 my-sm-0" type="submit">Search</button>
-                                </form>} */}
-                            </div>
+                                <label id="toggle" htmlFor="main-nav-toggle" style={{ 'marginBottom': '0' }}><span>Menu</span></label>
 
-                            <label id="toggle" htmlFor="main-nav-toggle" style={{ 'marginBottom': '0' }}><span>Menu</span></label>
+                                <nav className="col-md-4 nav-main">
+                                    <ul className="nav-ul">
+                                        {loggedIn && <li className="nav-item"><NavLink exact to={`/home/profile/${userId}`} className="nav-link  fas fa-user tooltipCustom"  > {userService.getUsername()}<span className="tooltiptextCustom">Profile</span></NavLink></li>}
 
-                            <nav className="nav-main">
-                                <ul className="nav-ul">
-                                    {loggedIn && <li className="nav-item"><NavLink exact to={`/home/profile/${userId}`} className="nav-link  fas fa-user tooltipCustom"  > {userService.getUsername()}<span className="tooltiptextCustom">Profile</span></NavLink></li>}
-
-                                    {/* {loggedIn && <li className="nav-item"><NavLink exact to={`/home/comments/${userId}`} className="nav-link ">Home</NavLink></li>}
-                                    {loggedIn && <li className="nav-item"><NavLink exact to={`/home/findFriends/${userId}`} className="nav-link " >Find friends!</NavLink></li>} */}
+                                        {/* {loggedIn && <li className="nav-item"><NavLink exact to={`/home/comments/${userId}`} className="nav-link ">Home</NavLink></li>}
+                                        {loggedIn && <li className="nav-item"><NavLink exact to={`/home/findFriends/${userId}`} className="nav-link " >Find friends!</NavLink></li>} */}
 
 
-{/*                                     {loggedIn &&
-                                        <li className="nav-item">
-                                            <NavLink exact to={`/home/friendRequests/${userId}`} className="nav-link tooltipCustom">
-                                                <i className="fas fa-user-friends"></i>
-                                                {isFrendRequestsArrEmpty && <span id="icon-badge-container-friend-requests">{this.props.friendRequestsArr.length}</span>}
-                                                <i id="icon-badge-container-friend-requests" data-count="2" className="fas fa-user-friends"></i>
-                                                <span className="tooltiptextCustom" id="friend-requests-tooltip">Friend Requests</span>
-                                            </NavLink>
-                                        </li>} */}
-
-       {/*                              {loggedIn && pathname &&
-                                        <li className="nav-item"
-                                            id="onclick-wrapper"
-                                            onClick={this.getAllFriendMessages}
-                                            onBlur={this.handleBlur('onclick-wrapper')}
-                                        >
-                                            <div className="icon-badge-wrapper">
-                                                <NavLink className="fas fa-envelope tooltipCustom nav-link" to="#">
-                                                    <span className="tooltiptextCustom">Messages</span>
+    {/*                                     {loggedIn &&
+                                            <li className="nav-item">
+                                                <NavLink exact to={`/home/friendRequests/${userId}`} className="nav-link tooltipCustom">
+                                                    <i className="fas fa-user-friends"></i>
+                                                    {isFrendRequestsArrEmpty && <span id="icon-badge-container-friend-requests">{this.props.friendRequestsArr.length}</span>}
+                                                    <i id="icon-badge-container-friend-requests" data-count="2" className="fas fa-user-friends"></i>
+                                                    <span className="tooltiptextCustom" id="friend-requests-tooltip">Friend Requests</span>
                                                 </NavLink>
-                                                {this.state.displayMessageCount && <span id="icon-badge-container-messages">{this.state.unreadMessages}</span>}
-                                            </div>
+                                            </li>} */}
 
-                                            <div className={`dropdown-container ${showDropdown}`}>
-                                                <div className="dropdown-messagebox-header" onClick={this.changeHeight}>
-                                                    <div className="dropdown-messagebox-chat-icon">
-                                                        <i className="fas fa-envelope"></i>
-                                                    </div>
-                                                    <h4 className="dropdown-chat-title" style={{ color: ' #333' }}>
-                                                        Messages
-                                                    </h4>
+        {/*                              {loggedIn && pathname &&
+                                            <li className="nav-item"
+                                                id="onclick-wrapper"
+                                                onClick={this.getAllFriendMessages}
+                                                onBlur={this.handleBlur('onclick-wrapper')}
+                                            >
+                                                <div className="icon-badge-wrapper">
+                                                    <NavLink className="fas fa-envelope tooltipCustom nav-link" to="#">
+                                                        <span className="tooltiptextCustom">Messages</span>
+                                                    </NavLink>
+                                                    {this.state.displayMessageCount && <span id="icon-badge-container-messages">{this.state.unreadMessages}</span>}
                                                 </div>
-                                                {messages}
-                                            </div>
-                                        </li>
-                                    } */}
 
-                                    {(loggedIn && (isRoot || isAdmin)) && <li className="nav-item"><NavLink exact to={`/home/logs/${userId}`} className="nav-link"> Logs</NavLink></li>}
-                                    {loggedIn && <li className="nav-item"><NavLink exact to="#" className="nav-link " onClick={onLogout} >Logout</NavLink></li>}
-                                    {!loggedIn && <li className="nav-item"><NavLink exact to="/login" className="nav-link" >Login</NavLink></li>}
-                                    {!loggedIn && <li className="nav-item"><NavLink exact to="/register" className="nav-link" >Register</NavLink></li>}
-                                </ul>
-                            </nav>
+                                                <div className={`dropdown-container ${showDropdown}`}>
+                                                    <div className="dropdown-messagebox-header" onClick={this.changeHeight}>
+                                                        <div className="dropdown-messagebox-chat-icon">
+                                                            <i className="fas fa-envelope"></i>
+                                                        </div>
+                                                        <h4 className="dropdown-chat-title" style={{ color: ' #333' }}>
+                                                            Messages
+                                                        </h4>
+                                                    </div>
+                                                    {messages}
+                                                </div>
+                                            </li>
+                                        } */}
+
+                                        {(loggedIn && (isRoot || isAdmin)) && <li className="nav-item"><NavLink exact to={`/home/logs/${userId}`} className="nav-link"> Logs</NavLink></li>}
+                                        {loggedIn && <li className="nav-item"><NavLink exact to="#" className="nav-link " onClick={onLogout} >Logout</NavLink></li>}
+                                        {!loggedIn && <li className="nav-item"><NavLink exact to="/login" className="nav-link" >Login</NavLink></li>}
+                                        {!loggedIn && <li className="nav-item"><NavLink exact to="/register" className="nav-link" >Register</NavLink></li>}
+                                    </ul>
+                                </nav>
+                            </div>
                         </div>
                     </section>
                 </header>
@@ -204,18 +200,18 @@ const mapStateToProps = (state) => {
         loggedInUserData: state.loggedInUserData,
 
 /*         fetchAllUnreadMessages: state.fetchAllUnreadMessages,
-        allUnreadMessages: state.fetchAllUnreadMessages.allUnreadMessages,
+        allUnreadMessages: state.fetchAllUnreadMessages.allUnreadMessages,*/
 
         searchResultsData: state.searchResults,
 
-        friendRequestsArr: state.findFriends.userWaitingForAcceptingRequest, */
+       /* friendRequestsArr: state.findFriends.userWaitingForAcceptingRequest,*/
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         // triggerMessageLoad: (userData) => { dispatch(triggerMessageLoadAction(userData)) },
-        // searchResult: (loggedInUserId, search) => { dispatch(searchResultsAction(loggedInUserId, search)) },
+        searchResult: (loggedInUserId, search) => { dispatch(searchResultsAction(loggedInUserId, search)) },
         // loadAllUnreadMessages: () => { dispatch(fetchAllUnreadMessagesAction()) },
     }
 }

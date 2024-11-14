@@ -45,6 +45,8 @@
 .App-button-primary{
   background:#3b5998;
   color:white;
+  padding-inline: 1rem;
+  margin-right: 10px;
 }
 
 .App-button-primary:hover{

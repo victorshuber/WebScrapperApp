@@ -1,13 +1,19 @@
 package com.example.WebScrapperApp.service;
 
 
+import com.example.WebScrapperApp.domain.entities.UserDetail;
 import com.example.WebScrapperApp.domain.entities.UsersHib;
+import com.example.WebScrapperApp.domain.models.userModels.UserRegisterModel;
 import com.example.WebScrapperApp.repository.IConfirmationTokenRepository;
 import com.example.WebScrapperApp.repository.IUserRepository;
 import com.example.WebScrapperApp.security.SecurityUserDetails;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,17 +41,25 @@ public class UserService implements IUserService, UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public ResponseEntity<?> saveUser(UsersHib user) {
-        if (userRepository.existsByUserEmail(user.getUserEmail())) {
+    public ResponseEntity<?> saveUser(UserRegisterModel newUser) {
+        if (userRepository.existsByUserEmail(newUser.getEmail())) {
             return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
-
+        UsersHib user = new UsersHib();
         // Encode the password before saving
-        user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
+        user.setUserEmail(newUser.getEmail());
+        user.setUserName(newUser.getFirstName());
+        user.setUserPassword(passwordEncoder.encode(newUser.getPassword()));
+
+        UserDetail userDetail = new UserDetail();
+        userDetail.setUserLastName(newUser.getLastName());
+        userDetail.setUserCountry(newUser.getCountry());
+
+        user.setUserDetailId(userDetail.getUserDetailsId());
         userRepository.save(user);
 
         // Rest of the code for sending confirmation email
-
+        SimpleMailMessage message = new SimpleMailMessage();
         return ResponseEntity.ok("Verify email by the link sent on your email address");
     }
 

@@ -1,6 +1,5 @@
 package com.example.WebScrapperApp.domain.entities;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,20 +11,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
-public class UsersHib {
+@Table(name = "user detail")
+public class UserDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userId;
-
-    private String userName;
-
-    private String userEmail;
-
-    private String userPassword;
-    private String userRole;
-    private Long userDetailId;
-
-    private boolean isEnabled;
+    private Long userDetailsId;
+    private String userLastName;
+    private String userCountry;
+    private Long userPictureId;
 
 }

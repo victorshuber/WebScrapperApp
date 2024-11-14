@@ -12,11 +12,9 @@ public class UserServiceModel implements Serializable {
     private String password;
     private String firstName;
     private String lastName;
-    private String address;
-    private String city;
+    private String country;
     private String username;
     private String profilePicUrl;
-    private String backgroundImageUrl;
     private boolean isOnline;
     private boolean isAccountNonExpired;
     private boolean isAccountNonLocked;
@@ -95,20 +93,12 @@ public class UserServiceModel implements Serializable {
         isDeleted = deleted;
     }
 
-    public String getAddress() {
-        return this.address;
+    public String getCountry() {
+        return this.country;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCity() {
-        return this.city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getProfilePicUrl() {
@@ -119,13 +109,6 @@ public class UserServiceModel implements Serializable {
         this.profilePicUrl = profilePicUrl;
     }
 
-    public String getBackgroundImageUrl() {
-        return this.backgroundImageUrl;
-    }
-
-    public void setBackgroundImageUrl(String backgroundImageUrl) {
-        this.backgroundImageUrl = backgroundImageUrl;
-    }
 
     public boolean isOnline() {
         return this.isOnline;

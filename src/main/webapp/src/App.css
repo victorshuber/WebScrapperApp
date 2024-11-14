@@ -37,6 +37,7 @@
   }
 }
  */
+ @import url("./custom-css/styles.css");
 
  * {
   margin: 0;

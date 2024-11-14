@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { ToastComponent } from '../common';
 import { connect } from 'react-redux';
 import { registerAction, redirectAction } from '../../store/actions/authActions'
+import { requester } from '../../infrastructure';
 
 class RegisterPage extends Component {
     constructor(props) {
@@ -16,8 +17,7 @@ class RegisterPage extends Component {
             confirmPassword: '',
             firstName: '',
             lastName: '',
-            address: '',
-            city: '',
+            country: '',
 
             touched: {
                 username: false,
@@ -26,8 +26,7 @@ class RegisterPage extends Component {
                 confirmPassword: false,
                 firstName: false,
                 lastName: false,
-                address: false,
-                city: false,
+                country: false,
             }
         };
 
@@ -69,8 +68,8 @@ class RegisterPage extends Component {
     }
 
     canBeSubmitted() {
-        const { username, email, firstName, lastName, password, confirmPassword, address, city } = this.state;
-        const errors = this.validate(username, email, firstName, lastName, password, confirmPassword, address, city);
+        const { username, email, firstName, lastName, password, confirmPassword, country } = this.state;
+        const errors = this.validate(username, email, firstName, lastName, password, confirmPassword, country);
         const isDisabled = Object.keys(errors).some(x => errors[x])
         return !isDisabled;
     }
@@ -82,7 +81,11 @@ class RegisterPage extends Component {
 
     }
 
-    validate = (username, email, firstName, lastName, password, confirmPassword, address, city) => {
+    mailIsAlreadyRegistrated = () => {
+        requester.get
+    }
+
+    validate = (username, email, firstName, lastName, password, confirmPassword, country) => {
         const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
         const firstLastNameRegex = /^[A-Z]([a-zA-Z]+)?$/;
         const testEmail = emailRegex.test(email)
@@ -90,19 +93,18 @@ class RegisterPage extends Component {
         const testLastName = firstLastNameRegex.test(lastName)
         return {
             username: username.length < 4 || username.length > 16,
-            email: email.length === 0 || !testEmail,
+            email: email.length === 0 || !testEmail || mailIsAlreadyRegistrated,
             firstName: firstName.length === 0 || !testFirstName,
             lastName: lastName.length === 0 || !testLastName,
             password: password.length < 4 || password.length > 16,
             confirmPassword: confirmPassword.length === 0 || confirmPassword !== password,
-            address: address.length === 0,
-            city: city.length === 0,
+            country: country.length === 0,
         }
     }
 
     render() {
-        const { username, email, firstName, lastName, password, confirmPassword, address, city } = this.state;
-        const errors = this.validate(username, email, firstName, lastName, password, confirmPassword, address, city);
+        const { username, email, firstName, lastName, password, confirmPassword, country } = this.state;
+        const errors = this.validate(username, email, firstName, lastName, password, confirmPassword, country);
         const isEnabled = !Object.keys(errors).some(x => errors[x])
 
         const shouldMarkError = (field) => {
@@ -152,22 +154,6 @@ class RegisterPage extends Component {
                                             placeholder="Enter first name"
                                         />
                                         {shouldMarkError('firstName') && <small id="firstNameHelp" className="form-text alert alert-danger">{(!this.state.firstName ? 'First Name is required!' : 'First Name must start with a capital letter and contain only letters!')}</small>}
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label htmlFor="address" >Address</label>
-                                        <input
-                                            type="text"
-                                            className={"form-control " + (shouldMarkError('address') ? "error" : "")}
-                                            id="address"
-                                            name="address"
-                                            value={this.state.address}
-                                            onChange={this.onChangeHandler}
-                                            onBlur={this.handleBlur('address')}
-                                            aria-describedby="addressHelp"
-                                            placeholder="Enter address"
-                                        />
-                                        {shouldMarkError('address') && <small id="addressHelp" className="form-text alert alert-danger">{(!this.state.address ? 'Address is required!' : '')}</small>}
                                     </div>
 
                                     <div className="form-group">
@@ -222,19 +208,19 @@ class RegisterPage extends Component {
                                     </div>
 
                                     <div className="form-group">
-                                        <label htmlFor="city" >City</label>
+                                        <label htmlFor="country" >Country</label>
                                         <input
                                             type="text"
-                                            className={"form-control " + (shouldMarkError('city') ? "error" : "")}
-                                            id="city"
-                                            name="city"
-                                            value={this.state.city}
+                                            className={"form-control " + (shouldMarkError('country') ? "error" : "")}
+                                            id="country"
+                                            name="country"
+                                            value={this.state.country}
                                             onChange={this.onChangeHandler}
-                                            onBlur={this.handleBlur('city')}
-                                            aria-describedby="cityHelp"
-                                            placeholder="Enter city"
+                                            onBlur={this.handleBlur('country')}
+                                            aria-describedby="countryHelp"
+                                            placeholder="Enter country"
                                         />
-                                        {shouldMarkError('city') && <small id="cityHelp" className="form-text alert alert-danger">{(!this.state.city ? 'City is required!' : '')}</small>}
+                                        {shouldMarkError('country') && <small id="countryHelp" className="form-text alert alert-danger">{(!this.state.country ? 'Country is required!' : '')}</small>}
                                     </div>
 
                                     <div className="form-group">

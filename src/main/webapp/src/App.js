@@ -8,6 +8,7 @@ import { userService } from './infrastructure';
 import Navbar from './components/common/NavBar';
 import { ToastComponent } from './components/common';
 import { CircleLoader } from 'react-spinners';
+import './styles/App.css';
 
 const StartPage = lazy(() => import('./components/pages/StartPage'))
 const HomePage = lazy(() => import('./components/pages/HomePage'))
@@ -40,7 +41,7 @@ class App extends React.Component {
     return (
       <Fragment>
         <Navbar loggedIn={localStorage.getItem('token') != null} onLogout={this.onLogout} {...this.props} />
-        <ToastContainer transition={Zoom} closeButton={false} />
+        <ToastContainer transition={Zoom} closeButton={false} autoClose={true}/>
         <Suspense fallback={
           <div className='sweet-loading'>
             <CircleLoader
