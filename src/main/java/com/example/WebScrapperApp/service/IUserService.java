@@ -13,4 +13,5 @@ public interface IUserService extends UserDetailsService {
     ResponseEntity<?> confirmEmail(String confirmationToken);
 
     ResponseEntity<?> authenticateUser(String username, String password);
+
 }

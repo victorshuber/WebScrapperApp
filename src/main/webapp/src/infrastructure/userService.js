@@ -1,5 +1,6 @@
 import React from 'react';
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { ToastComponent } from '../components/common'
 
 const BASE_URL = 'http://localhost:8080';
@@ -91,7 +92,8 @@ export default {
             } catch (err) {
                 localStorage.clear();
                 toast.error(<ToastComponent.errorToast text={'Unauthorized'} />, {
-                    position: toast.POSITION.TOP_RIGHT
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: 5000
                 });
                 // throw new Error("Unauthorized");
             }

@@ -1,19 +1,20 @@
-import React, { Component } from 'react';
+import React from 'react';
 import '../../styles/FormPages.css';
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { ToastComponent } from '../common';
 import { connect } from 'react-redux';
 import { loginAction, redirectAction } from '../../store/actions/authActions';
 
-class LoginPage extends Component {
+class LoginPage extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = {
-            username: '',
+            email: '',
             password: '',
             touched: {
-                username: false,
+                email: false,
                 password: false
             }
         };
@@ -25,13 +26,15 @@ class LoginPage extends Component {
     componentDidUpdate(prevProps, prevState) {
         if (this.props.loginError.hasError && prevProps.loginError !== this.props.loginError) {
             toast.error(<ToastComponent.errorToast text={`${this.props.loginError.message}`} />, {
-                position: toast.POSITION.TOP_RIGHT
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 5000
             });
         } else if (this.props.loginSuccess) {
             this.props.redirect();
 
             toast.success(<ToastComponent.successToast text={' You have successfully logged in!'} />, {
-                position: toast.POSITION.TOP_RIGHT
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 5000
             });
 
             this.props.history.push('/');
@@ -51,13 +54,13 @@ class LoginPage extends Component {
             return;
         }
 
-        const { username, password } = this.state;
-        this.props.login(username, password);
+        const { email, password } = this.state;
+        this.props.login(email, password);
     }
 
     canBeSubmitted() {
-        const { username, password } = this.state;
-        const errors = this.validate(username, password);
+        const { email, password } = this.state;
+        const errors = this.validate(email, password);
         const isDisabled = Object.keys(errors).some(x => errors[x])
         return !isDisabled;
     }
@@ -68,16 +71,16 @@ class LoginPage extends Component {
         });
     }
 
-    validate = (username, password) => {
+    validate = (email, password) => {
         return {
-            username: username.length === 0,
+            email: email.length === 0,
             password: password.length === 0
         }
     }
 
     render() {
-        const { username, password } = this.state;
-        const errors = this.validate(username, password);
+        const { email, password } = this.state;
+        const errors = this.validate(email, password);
         const isEnabled = !Object.keys(errors).some(x => errors[x])
 
         const shouldMarkError = (field) => {
@@ -95,19 +98,19 @@ class LoginPage extends Component {
 
                     <form className="Login-form-container" onSubmit={this.onSubmitHandler}>
                         <div className="form-group">
-                            <label htmlFor="username">Username</label>
+                            <label htmlFor="Email">Email</label>
                             <input
                                 type="text"
-                                className={"form-control " + (shouldMarkError('username') ? "error" : "")}
-                                id="username"
-                                name="username"
-                                value={this.state.username}
+                                className={"form-control " + (shouldMarkError('email') ? "error" : "")}
+                                id="email"
+                                name="email"
+                                value={this.state.email}
                                 onChange={this.onChangeHandler}
-                                onBlur={this.handleBlur('username')}
-                                aria-describedby="usernameHelp"
-                                placeholder="Enter username"
+                                onBlur={this.handleBlur('email')}
+                                aria-describedby="userMailHelp"
+                                placeholder="Enter user Email"
                             />
-                            {shouldMarkError('username') && <small id="usernameHelp" className="form-text alert alert-danger">Username is required!</small>}
+                            {shouldMarkError('email') && <small id="userMailHelp" className="form-text alert alert-danger">User mail is required!</small>}
                         </div>
 
                         <div className="form-group">
@@ -145,7 +148,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
     return {
-        login: (username, password) => dispatch(loginAction(username, password)),
+        login: (email, password) => dispatch(loginAction(email, password)),
         redirect: () => dispatch(redirectAction())
     }
 }

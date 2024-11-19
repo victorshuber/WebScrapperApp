@@ -8,16 +8,36 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Entity
-@Table(name = "user detail")
-public class UserDetail {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userDetailsId;
-    private String userLastName;
+@Table(name="userDetail")
+public class UserDetail extends BaseEntity{
+
+    @Getter
+    @Setter
+    private String userLastname;
+
+    @Getter
+    @Setter
     private String userCountry;
+
+    @Getter
+    @Setter
     private Long userPictureId;
+
+    @OneToOne(targetEntity = UsersHib.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "id")
+    private UsersHib user;
+
+    public UserDetail(UsersHib user) {
+        this.user = user;
+    }
+
+    public UsersHib getUserEntity() {
+        return user;
+    }
+
+    public void setUserEntity(UsersHib user) {
+        this.user = user;
+    }
 
 }

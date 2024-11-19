@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const BASE_URL = 'http://localhost:8080';
 
 const getAuthHeader = () => {
@@ -5,123 +7,97 @@ const getAuthHeader = () => {
 
     return (token && token.length)
         ? { 'Authorization': `Bearer ${token}` }
-        : {}
-}
+        : {};
+};
 
-export default {
+const requester = {
     get: (endpoint, callback) => {
-        return fetch(BASE_URL + endpoint, {
-            method: 'GET',
+        return axios.get(`${BASE_URL}${endpoint}`, {
             headers: {
                 Accept: 'application/json',
                 ...getAuthHeader(),
             },
-        }).then(checkStatus)
-            // .then(data => data.json())
-            .then(callback);
+        })
+        .then(response => callback(response))
+        .catch(handleError);
     },
 
     post: (endpoint, data, callback) => {
-        return fetch(BASE_URL + endpoint, {
-            method: 'POST',
+        return axios.post(`${BASE_URL}${endpoint}`, data, {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
                 ...getAuthHeader(),
             },
-
-            body: JSON.stringify(data)
-        }).then(checkStatus)
-            .then(callback);
+        })
+        .then(response => callback(response))
+        .catch(handleError);
     },
 
     put: (endpoint, data, callback) => {
-        return fetch(BASE_URL + endpoint, {
-            method: 'PUT',
+        return axios.put(`${BASE_URL}${endpoint}`, data, {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
                 ...getAuthHeader(),
             },
-            body: JSON.stringify(data)
-        }).then(checkStatus)
-            .then(callback);
+        })
+        .then(response => callback(response))
+        .catch(handleError);
     },
 
     delete: (endpoint, data, callback) => {
-        return fetch(BASE_URL + endpoint, {
-            method: 'DELETE',
+        return axios.delete(`${BASE_URL}${endpoint}`, {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
                 ...getAuthHeader(),
             },
-            body: JSON.stringify(data)
-        }).then(checkStatus)
-            .then(callback)
+            data,
+        })
+        .then(response => callback(response))
+        .catch(handleError);
     },
 
     update: (data) => {
-        return fetch(BASE_URL + '/users/update', {
-            method: 'put',
-            body: JSON.stringify(data),
+        return axios.put(`${BASE_URL}/users/update`, data, {
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'Content-Type': 'application/json',
                 ...getAuthHeader(),
-            }
-        }).then(checkStatus)
-            .then(() => console.log('updated!!!'))
-        // .catch(err => {
-        //     console.log(err)
-        // })
-
+            },
+        })
+        .then(() => console.log('updated!!!'))
+        .catch(handleError);
     },
 
     addPhoto: (endpoint, data, callback) => {
-        return fetch(BASE_URL + endpoint, {
-            method: 'POST',
+        return axios.post(`${BASE_URL}${endpoint}`, data, {
             headers: {
-                ...getAuthHeader()
+                ...getAuthHeader(),
             },
-            body: data
-        }).then(checkStatus)
-            .then(callback)
+        })
+        .then(response => callback(response))
+        .catch(handleError);
+    },
+};
+
+function handleError(error) {
+    if (error.response) {
+        const { status, data } = error.response;
+
+        if (status === 403 && error.response.config.url === `${BASE_URL}/login`) {
+            throw new Error('Incorrect credentials!');
+        } else if (status === 403 && error.response.type === 'cors') {
+            throw new Error('Your JWT token is expired. Please log in!');
+        } else if (status === 400) {
+            throw new Error('Error: Bad request');
+        } else {
+            throw new Error(data.message || error.message || 'Unknown error');
+        }
+    } else {
+        throw new Error(error.message || 'Unknown error');
     }
 }
 
-function checkStatus(response) {
-    if (response.status >= 200 && response.status < 300) {
-        return response.json()
-    } else {
-        var error = new Error(response.statusText);
-        if (response.status === 403 && response.url === (BASE_URL + '/login')) {
-            error.message = 'Incorrect credentials!';
-            error.response = response;
-            throw error;
-        } else if (response.status === 403 && response.type === 'cors') {
-            console.log('err response: ', response)
-            error.message = 'Your JWT token is expired. Please log in!'
-            error.status = 403;
-            error.type = 'cors'
-            throw error;
-        } else if (response.status === 400) {
-            console.log('err response: ', response)
-            error.message = 'Error: Bad request'
-            // error.message = response.message
-            error.status = 400;
-            error.type = 'cors'
-            throw error;
-        }
-        // else if (response.status === 500) {
-        //     console.log('err response: ', response)
-        //     error.message = 'Something went wrong'
-        //     error.status = 403;
-        //     error.type = 'cors'
-        //     throw error;
-        // }
-        else {
-            return response.json();
-        }
-    }
-}
+export default requester;

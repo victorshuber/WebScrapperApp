@@ -14,14 +14,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name="confirmationToken")
-public class ConfirmationToken {
+public class ConfirmationToken extends BaseEntity{
 
-    @Getter
+/*    @Getter
     @Setter
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "confirmation_token_seq")
     @Column(name="token_id")
-    private Long tokenId;
+    private Long tokenId;*/
 
     @Getter
     @Setter
@@ -34,7 +34,7 @@ public class ConfirmationToken {
     private Date createdDate;
 
     @OneToOne(targetEntity = UsersHib.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id")
+    @JoinColumn(nullable = false, name = "id")
     private UsersHib user;
 
 

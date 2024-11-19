@@ -1,28 +1,24 @@
 package com.example.WebScrapperApp.service;
 
 
+import com.example.WebScrapperApp.components.constants.UserRoles;
+import com.example.WebScrapperApp.domain.entities.ConfirmationToken;
 import com.example.WebScrapperApp.domain.entities.UserDetail;
 import com.example.WebScrapperApp.domain.entities.UsersHib;
 import com.example.WebScrapperApp.domain.models.userModels.UserRegisterModel;
 import com.example.WebScrapperApp.repository.IConfirmationTokenRepository;
+import com.example.WebScrapperApp.repository.IUserDetailRepository;
 import com.example.WebScrapperApp.repository.IUserRepository;
 import com.example.WebScrapperApp.security.SecurityUserDetails;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -30,6 +26,9 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private IUserDetailRepository userDetailRepository;
 
     @Autowired
     private IConfirmationTokenRepository confirmationTokenRepository;
@@ -43,30 +42,39 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public ResponseEntity<?> saveUser(UserRegisterModel newUser) {
         if (userRepository.existsByUserEmail(newUser.getEmail())) {
-            return ResponseEntity.badRequest().body("Error: Email is already in use!");
+            return createResponse(HttpStatus.BAD_REQUEST, "Email is already in use!");
         }
-        UsersHib user = new UsersHib();
-        // Encode the password before saving
-        user.setUserEmail(newUser.getEmail());
-        user.setUserName(newUser.getFirstName());
-        user.setUserPassword(passwordEncoder.encode(newUser.getPassword()));
 
-        UserDetail userDetail = new UserDetail();
-        userDetail.setUserLastName(newUser.getLastName());
-        userDetail.setUserCountry(newUser.getCountry());
-
-        user.setUserDetailId(userDetail.getUserDetailsId());
+        UsersHib user = createUserEntity(newUser);
         userRepository.save(user);
 
-        // Rest of the code for sending confirmation email
-        SimpleMailMessage message = new SimpleMailMessage();
-        return ResponseEntity.ok("Verify email by the link sent on your email address");
+        UserDetail userDetail = new UserDetail(user);
+        userDetail.setUserLastname(newUser.getLastName());
+        userDetail.setUserCountry(newUser.getCountry());
+        userDetailRepository.save(userDetail);
+
+        ConfirmationToken confirmationToken = new ConfirmationToken(user);
+        confirmationTokenRepository.save(confirmationToken);
+
+        sendConfirmationEmail(user.getUserEmail(), confirmationToken.getConfirmationToken());
+        return createResponse(HttpStatus.OK, "Verify email by the link sent on your email address");
     }
 
     @Override
     public ResponseEntity<?> confirmEmail(String confirmationToken) {
-        // Implementation for confirming email
-        return null;
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+
+        if (token == null) {
+            return createResponse(HttpStatus.BAD_REQUEST, "Error: Couldn't verify email");
+        }
+
+        UsersHib user = token.getUserEntity();
+        user.setEnabled(true);
+        userRepository.saveAndFlush(user);
+
+        String successMessage = "<H1>Email verified successfully!</p></br>" +
+                "<p>This page can be closed</p>";
+        return ResponseEntity.status(HttpStatus.OK).body(successMessage);
     }
 
     @Override
@@ -79,35 +87,57 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     @Override
-    public ResponseEntity<Map<String, String>> authenticateUser(String username, String password) {
-
-        Map<String, String> response = new HashMap<>();
+    public ResponseEntity<?> authenticateUser(String userEmail, String password) {
         try {
-            System.out.println("\nReceived username is: " + username + "\nReceived password is: " + password);
-            UserDetails userDetails = loadUserByUsername(username);
+            UserDetails userDetails = loadUserByUsername(userEmail);
+
+            if (!userDetails.isEnabled()) {
+                return createResponse(HttpStatus.FORBIDDEN, "Error! Given user is not activated!");
+            }
 
             if (passwordEncoder.matches(password, userDetails.getPassword())) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, userDetails.getAuthorities());
-                authentication.setDetails(userDetails);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                // Success response with token
-                response.put("token", SecurityUserDetails.generateToken(username));
-                return ResponseEntity.ok(response);
-            } else {
-                // Password mismatch
-                response.put("message", "Error! Password did not match");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+                String token = SecurityUserDetails.generateToken(userEmail);
+                return createResponse(HttpStatus.OK, Map.of("token", token));
             }
+
+            return createResponse(HttpStatus.FORBIDDEN, "Error! Password did not match");
+
         } catch (UsernameNotFoundException ex) {
-            // Username not found
-            response.put("message", "Error! Given user not found");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            return createResponse(HttpStatus.FORBIDDEN, "Error! Given user not found");
         }
     }
 
+    // Helper Methods
 
+    private UsersHib createUserEntity(UserRegisterModel newUser) {
+        UsersHib user = new UsersHib();
+        user.setUserEmail(newUser.getEmail());
+        user.setUserName(newUser.getFirstName());
+        user.setUserPassword(passwordEncoder.encode(newUser.getPassword()));
+        user.setUserRole(UserRoles.USER_ROLE.name());
+
+
+        return user;
+    }
+
+    private void sendConfirmationEmail(String userEmail, String token) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(userEmail);
+        mailMessage.setSubject("Complete Registration!");
+        mailMessage.setText("To confirm your account, please click here: " +
+                "http://localhost:8080/confirm-account?token=" + token);
+        emailService.sendEmail(mailMessage);
+    }
+
+    private ResponseEntity<?> createResponse(HttpStatus status, String message) {
+        return ResponseEntity.status(status).body(Map.of("message", message));
+    }
+
+    private ResponseEntity<?> createResponse(HttpStatus status, Map<String, ?> body) {
+        return ResponseEntity.status(status).body(body);
+    }
 }
+
 
 
 /*package com.example.WebScrapperApp.service;

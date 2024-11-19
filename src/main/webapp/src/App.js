@@ -1,6 +1,7 @@
-import React, { Component, Fragment, lazy, Suspense } from 'react';
+import React, {Fragment, lazy, Suspense } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { ToastContainer, toast, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { connect } from 'react-redux';
 import { logoutAction } from './store/actions/authActions';
 import { Footer } from './components/common';
@@ -15,6 +16,7 @@ const HomePage = lazy(() => import('./components/pages/HomePage'))
 const RegisterPage = lazy(() => import('./components/pages/RegisterPage'))
 const LoginPage = lazy(() => import('./components/pages/LoginPage'))
 const ProfilePage = lazy(() => import('./components/pages/ProfilePage'))
+const ConfirmtionPage = lazy(() => import('./components/pages/ConfirmationPage'))
 const ErrorPage = lazy(() => import('./components/pages/ErrorPage'))
 
 
@@ -55,6 +57,8 @@ class App extends React.Component {
             <Route exact path="/" component={StartPage} />
             {!loggedIn && <Route exact path="/register" component={RegisterPage} />}
             {!loggedIn && <Route exact path="/login" component={LoginPage} />}
+            {!loggedIn && <Route exact path="/profile" component={ProfilePage} />}
+            {!loggedIn && <Route path="/confirm-account" component={ConfirmtionPage} />}
             {loggedIn && <Route path="/home" component={HomePage} />}
             <Route exact path="/error" component={ErrorPage} />
             <Route component={ErrorPage} />

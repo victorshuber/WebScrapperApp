@@ -1,6 +1,7 @@
 package com.example.WebScrapperApp.components.validations.annotations;
 
 
+import com.example.WebScrapperApp.service.IUserService;
 import com.example.WebScrapperApp.service.UserService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

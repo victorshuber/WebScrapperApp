@@ -7,10 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "logs")
 
-public class Logger {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long logId;
+public class Logger extends BaseEntity{
     private String username;
     private String method;
     private String tableName;

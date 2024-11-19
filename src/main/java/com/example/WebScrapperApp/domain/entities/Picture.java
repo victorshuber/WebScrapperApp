@@ -1,19 +1,16 @@
 package com.example.WebScrapperApp.domain.entities;
 
 
-import com.example.WebScrapperApp.components.constants.Users.User;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "pictures")
-public class Picture {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long pictureId;
+public class Picture extends BaseEntity {
     private String description;
-    private User user;
+    private UsersHib userId;
     private String imageUrl;
     private LocalDateTime time;
     private String cloudinaryPublicId;
@@ -30,14 +27,14 @@ public class Picture {
         this.description = description;
     }
 
-    @ManyToOne(optional = false, targetEntity = User.class)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    public User getUser() {
-        return this.user;
+    @ManyToOne(optional = false, targetEntity = UsersHib.class)
+    @JoinColumn(name = "userId", referencedColumnName = "id")
+    public UsersHib getUserId() {
+        return this.userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(UsersHib id) {
+        this.userId = id;
     }
 
     @Column(name = "image_url", nullable = false)

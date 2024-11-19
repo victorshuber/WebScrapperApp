@@ -1,12 +1,13 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import '../../styles/FormPages.css'
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { ToastComponent } from '../common';
 import { connect } from 'react-redux';
 import { registerAction, redirectAction } from '../../store/actions/authActions'
 import { requester } from '../../infrastructure';
 
-class RegisterPage extends Component {
+class RegisterPage extends React.Component {
     constructor(props) {
         super(props)
 
@@ -34,18 +35,22 @@ class RegisterPage extends Component {
         this.onSubmitHandler = this.onSubmitHandler.bind(this);
     }
 
-    componentDidUpdate(prevProps, prevState){
+    componentDidUpdate(prevProps, prevState) {
         if (this.props.registerError.hasError && prevProps.registerError !== this.props.registerError) {
+    
             toast.error(<ToastComponent.errorToast text={this.props.registerError.message} />, {
-                position: toast.POSITION.TOP_RIGHT
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 5000
             });
         } else if (this.props.registerSuccess) {
+    
             this.props.redirect();
-
+    
             toast.success(<ToastComponent.successToast text={this.props.registerMessage} />, {
-                position: toast.POSITION.TOP_RIGHT
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 5000
             });
-
+    
             this.props.history.push('/login');
         }
     }
@@ -81,9 +86,9 @@ class RegisterPage extends Component {
 
     }
 
-    mailIsAlreadyRegistrated = () => {
+/*     mailIsAlreadyRegistrated = () => {
         requester.get
-    }
+    } */
 
     validate = (username, email, firstName, lastName, password, confirmPassword, country) => {
         const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
@@ -93,7 +98,7 @@ class RegisterPage extends Component {
         const testLastName = firstLastNameRegex.test(lastName)
         return {
             username: username.length < 4 || username.length > 16,
-            email: email.length === 0 || !testEmail || mailIsAlreadyRegistrated,
+            email: email.length === 0 || !testEmail/*  || mailIsAlreadyRegistrated */,
             firstName: firstName.length === 0 || !testFirstName,
             lastName: lastName.length === 0 || !testLastName,
             password: password.length < 4 || password.length > 16,
@@ -171,6 +176,23 @@ class RegisterPage extends Component {
                                         />
                                         {shouldMarkError('password') && <small id="passwordHelp" className="form-text alert alert-danger">{(!this.state.password ? 'Password is required!' : 'Password should be at least 4 and maximum 16 characters long!')}</small>}
                                     </div>
+
+                                    <div className="form-group">
+                                        <label htmlFor="confirmPassword" >Confirm Password</label>
+                                        <input
+                                            type="password"
+                                            className={"form-control " + (shouldMarkError('confirmPassword') ? "error" : "")}
+                                            id="confirmPassword"
+                                            name="confirmPassword"
+                                            value={this.state.confirmPassword}
+                                            onChange={this.onChangeHandler}
+                                            onBlur={this.handleBlur('confirmPassword')}
+                                            aria-describedby="confirmPasswordHelp"
+                                            placeholder="Confirm your password"
+                                        />
+                                        {shouldMarkError('confirmPassword') && <small id="confirmPasswordHelp" className="form-text alert alert-danger">Passwords do not match!</small>}
+                                    </div>
+
                                 </section>
 
                                 <section className="right-section">
@@ -223,21 +245,6 @@ class RegisterPage extends Component {
                                         {shouldMarkError('country') && <small id="countryHelp" className="form-text alert alert-danger">{(!this.state.country ? 'Country is required!' : '')}</small>}
                                     </div>
 
-                                    <div className="form-group">
-                                        <label htmlFor="confirmPassword" >Confirm Password</label>
-                                        <input
-                                            type="password"
-                                            className={"form-control " + (shouldMarkError('confirmPassword') ? "error" : "")}
-                                            id="confirmPassword"
-                                            name="confirmPassword"
-                                            value={this.state.confirmPassword}
-                                            onChange={this.onChangeHandler}
-                                            onBlur={this.handleBlur('confirmPassword')}
-                                            aria-describedby="confirmPasswordHelp"
-                                            placeholder="Confirm your password"
-                                        />
-                                        {shouldMarkError('confirmPassword') && <small id="confirmPasswordHelp" className="form-text alert alert-danger">Passwords do not match!</small>}
-                                    </div>
                                 </section>
                             </div>
 

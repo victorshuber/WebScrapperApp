@@ -72,6 +72,10 @@
   color: black;
 }
 
+.Toastify__toast {
+  animation-play-state: running !important;
+}
+
 p{
 	margin-bottom: 0;
 }

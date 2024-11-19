@@ -50,10 +50,6 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated()
                 )
                 .formLogin().disable()// Disable form login if using JWT or other mechanisms
-/*                .
-                .successHandler((httpServletRequest, httpServletResponse, authentication) -> httpServletResponse.setStatus(HttpStatus.OK.value()))
-                .failureHandler((httpServletRequest, httpServletResponse, e) -> httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value()))*/
-
                 .exceptionHandling()
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login") {
                     @Override

@@ -5,12 +5,9 @@ import com.example.WebScrapperApp.domain.entities.UsersHib;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-    @Repository
-    public interface IUserRepository extends JpaRepository<UsersHib, Long> {
-        UsersHib findByUserEmailIgnoreCase(String emailId);
+@Repository("userDetailRepository")
+public interface IUserDetailRepository extends JpaRepository<UserDetail, Long> {
 
-        Boolean existsByUserEmail(String email);
-    }
-
-
-
+//    UserDetail findByUserDetailId(Long userDetailId);
+//    UserDetail findByUser(UsersHib user);
+}

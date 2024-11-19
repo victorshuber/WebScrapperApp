@@ -13,10 +13,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "users")
-public class UsersHib {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userId;
+public class UsersHib extends BaseEntity{
 
     private String userName;
 
@@ -24,7 +21,6 @@ public class UsersHib {
 
     private String userPassword;
     private String userRole;
-    private Long userDetailId;
 
     private boolean isEnabled;
 

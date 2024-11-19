@@ -8,20 +8,20 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
 public class UserLoginModel implements Serializable {
-    private String username;
+    private String userEmail;
     private String password;
 
     public UserLoginModel() {
     }
 
-    @Pattern(regexp = "^([a-zA-Z0-9]+)$")
+    @Pattern(regexp = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")
     @Size(min = 4, max = 16, message = ValidationMessageConstants.INVALID_CREDENTIALS_MESSAGE)
-    public String getUsername() {
-        return this.username;
+    public String getUserEmail() {
+        return this.userEmail;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserMail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     @Password(minLength = 4, maxLength = 16, containsOnlyLettersAndDigits = true, message = ValidationMessageConstants.INVALID_CREDENTIALS_MESSAGE )

@@ -1,6 +1,5 @@
 package com.example.WebScrapperApp.controller;
 
-import com.example.WebScrapperApp.domain.entities.UsersHib;
 import com.example.WebScrapperApp.domain.models.userModels.UserLoginModel;
 import com.example.WebScrapperApp.domain.models.userModels.UserRegisterModel;
 import com.example.WebScrapperApp.service.IUserService;
@@ -27,9 +26,9 @@ public class UserController {
 
     @RequestMapping(value="/login", method= {RequestMethod.POST})
     public ResponseEntity<?> auth(@RequestBody UserLoginModel loginData) throws Exception {
-        String username = loginData.getUsername();
+        String userEmail = loginData.getUserEmail();
         String password = loginData.getPassword();
-        return iUserService.authenticateUser(username, password);
+        return iUserService.authenticateUser(userEmail, password);
     }
 
 }

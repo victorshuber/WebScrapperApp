@@ -2,72 +2,17 @@ import { requester } from '../../infrastructure';
 import {
     FETCH_LOGGEDIN_USERDATA_BEGIN, FETCH_LOGGEDIN_USERDATA_SUCCESS, FETCH_LOGGEDIN_USERDATA_ERROR, UPDATE_LOGGEDIN_USERDATA,
     FETCH_TIMELINE_USERDATA_BEGIN, FETCH_TIMELINE_USERDATA_SUCCESS, FETCH_TIMELINE_USERDATA_ERROR, UPDATE_TIMELINE_USERDATA,
-    FETCH_ALLCHATFRIENDS_BEGIN, FETCH_ALLCHATFRIENDS_SUCCESS, FETCH_ALLCHATFRIENDS_ERROR, EDIT_USERSTATUS,
-    FETCH_ALLFRIENDS_BEGIN, FETCH_ALLFRIENDS_SUCCESS, FETCH_ALLFRIENDS_ERROR,
     UPDATE_USER_SUCCESS, UPDATE_USER_BEGIN, UPDATE_USER_ERROR,
     FETCH_ALLUSERS_SUCCESS, FETCH_ALLUSERS_BEGIN, FETCH_ALLUSERS_ERROR,
     PROMOTE_USER_SUCCESS, PROMOTE_USER_BEGIN, PROMOTE_USER_ERROR,
     DEMOTE_USER_SUCCESS, DEMOTE_USER_BEGIN, DEMOTE_USER_ERROR, CHANGE_USERROLE,
     CHANGE_TIMELINE_USERDATA_SUCCESS, CHANGE_TIMELINE_USERDATA_BEGIN, CHANGE_TIMELINE_USERDATA_ERROR,
-    CHANGE_ALLFRIENDS_SUCCESS, CHANGE_ALLFRIENDS_BEGIN, CHANGE_ALLFRIENDS_ERROR, UPDATE_ALL_FRIENDS,
-    REMOVE_FRIEND_SUCCESS, REMOVE_FRIEND_BEGIN, REMOVE_FRIEND_ERROR,
     DELETE_USER_SUCCESS, DELETE_USER_BEGIN, DELETE_USER_ERROR,
-    FIND_FRIENDS_SUCCESS, FIND_FRIENDS_BEGIN, FIND_FRIENDS_ERROR,
-    ADD_FRIEND_SUCCESS, ADD_FRIEND_BEGIN, ADD_FRIEND_ERROR,
-    CANCEL_REQUEST_SUCCESS,CANCEL_REQUEST_BEGIN, CANCEL_REQUEST_ERROR,
-    CONFIRM_REQUEST_SUCCESS,CONFIRM_REQUEST_BEGIN, CONFIRM_REQUEST_ERROR,
     SEARCH_RESULTS_SUCCESS, SEARCH_RESULTS_BEGIN, SEARCH_RESULTS_ERROR,
 } from './actionTypes';
 
-// fetchAllChatFriends
-/* const fetchAllChatFriendsSuccess = (friendsChatArr) => {
-    return {
-        type: FETCH_ALLCHATFRIENDS_SUCCESS,
-        payload: friendsChatArr
-    }
-}
 
-const fetchAllChatFriendsBegin = () => {
-    return {
-        type: FETCH_ALLCHATFRIENDS_BEGIN,
-    }
-} */
 
-/* const fetchAllChatFriendsError = (error, message, status, path) => {
-    return {
-        type: FETCH_ALLCHATFRIENDS_ERROR,
-        error,
-        message,
-        status,
-        path,
-    }
-} */
-
-const updateUserStatusAction = (userData) => {
-    return {
-        type: EDIT_USERSTATUS,
-        payload: userData
-    }
-}
-
-/* const fetchAllChatFriendsAction = (userId) => {
-    return (dispatch) => {
-        dispatch(fetchAllChatFriendsBegin())
-        return requester.get(`/relationship/friends/${userId}`, (response) => {
-            if (response.error) {
-                const { error, message, status, path } = response;
-                dispatch(fetchAllChatFriendsError(error, message, status, path));
-            } else {
-                dispatch(fetchAllChatFriendsSuccess(response));
-            }
-        }).catch(err => {
-            if (err.status === 403 && err.message === 'Your JWT token is expired. Please log in!') {
-                localStorage.clear();
-            }
-            dispatch(fetchAllChatFriendsError('', `Error: ${err.message}`, err.status, ''));
-        })
-    }
-} */
 
 // fetchLoggedInUser
 const fetchLoggedInUserSuccess = (userData) => {
@@ -214,99 +159,6 @@ const changeCurrentTimeLineUserAction = (userId) => {
     }
 }
 
-// fetchAllFriends
-const fetchAllFriendsSuccess = (friendsArr) => {
-    return {
-        type: FETCH_ALLFRIENDS_SUCCESS,
-        payload: friendsArr
-    }
-}
-
-const fetchAllFriendsBegin = () => {
-    return {
-        type: FETCH_ALLFRIENDS_BEGIN,
-    }
-}
-
-const fetchAllFriendsError = (error, message, status, path) => {
-    return {
-        type: FETCH_ALLFRIENDS_ERROR,
-        error,
-        message,
-        status,
-        path,
-    }
-}
-
-const fetchAllFriendsAction = (userId) => {
-    return (dispatch) => {
-        dispatch(fetchAllFriendsBegin())
-        return requester.get(`/relationship/friends/${userId}`, (response) => {
-            if (response.error) {
-                const { error, message, status, path } = response;
-                dispatch(fetchAllFriendsError(error, message, status, path));
-            } else {
-                dispatch(fetchAllFriendsSuccess(response));
-            }
-        }).catch(err => {
-            if (err.status === 403 && err.message === 'Your JWT token is expired. Please log in!') {
-                localStorage.clear();
-            }
-            dispatch(fetchAllFriendsError('', `Error: ${err.message}`, err.status, ''));
-        })
-    }
-}
-
-// changeAllFriends
-const changeAllFriendsSuccess = (friendsArr) => {
-    return {
-        type: CHANGE_ALLFRIENDS_SUCCESS,
-        payload: friendsArr
-    }
-}
-
-const changeAllFriendsBegin = () => {
-    return {
-        type: CHANGE_ALLFRIENDS_BEGIN,
-    }
-}
-
-const changeAllFriendsError = (error, message, status, path) => {
-    return {
-        type: CHANGE_ALLFRIENDS_ERROR,
-        error,
-        message,
-        status,
-        path,
-    }
-}
-
-const updateAllFriendsAction = (friendsArr) => {
-    return {
-        type: UPDATE_ALL_FRIENDS,
-        payload: friendsArr
-    }
-}
-
-const changeAllFriendsAction = (userId) => {
-    return (dispatch) => {
-        dispatch(changeAllFriendsBegin())
-        return requester.get(`/relationship/friends/${userId}`, (response) => {
-            if (response.error) {
-                const { error, message, status, path } = response;
-                dispatch(changeAllFriendsError(error, message, status, path));
-            } else {
-                dispatch(updateAllFriendsAction(response));
-                dispatch(changeAllFriendsSuccess(response));
-            }
-        }).catch(err => {
-            if (err.status === 403 && err.message === 'Your JWT token is expired. Please log in!') {
-                localStorage.clear();
-            }
-            dispatch(changeAllFriendsError('', `Error: ${err.message}`, err.status, ''));
-        })
-    }
-}
 
 // updateUser
 const updateUserSuccess = (response) => {
@@ -543,51 +395,6 @@ const demoteUserAction = (userId) => {
 
 
 
-// confirmRequest
-/* const confirmRequestSuccess = (response, friendToAcceptId) => {
-    return {
-        type: CONFIRM_REQUEST_SUCCESS,
-        payload: response,
-        friendToAcceptId
-    }
-}
-
-const confirmRequestBegin = () => {
-    return {
-        type: CONFIRM_REQUEST_BEGIN,
-    }
-}
-
-const confirmRequestError = (error, message, status, path) => {
-    return {
-        type: CONFIRM_REQUEST_ERROR,
-        error,
-        message,
-        status,
-        path,
-    }
-}
-
-const confirmRequestAction = (loggedInUserId, friendToAcceptId) => {
-    return (dispatch) => {
-        dispatch(confirmRequestBegin())
-        return requester.post('/relationship/acceptFriend', {loggedInUserId, friendToAcceptId}, (response) => {
-            if (response.error) {
-                const { error, message, status, path } = response;
-                dispatch(cancelRequestError(error, message, status, path));
-            } else {
-                dispatch(confirmRequestSuccess(response, friendToAcceptId));
-                dispatch(changeAllFriendsAction(loggedInUserId));
-                dispatch(fetchAllChatFriendsAction(loggedInUserId));
-            }
-        }).catch(err => {
-            if (err.status === 403 && err.message === 'Your JWT token is expired. Please log in!') {
-                localStorage.clear();
-            }
-            dispatch(confirmRequestError('', `Error: ${err.message}`, err.status, ''));
-        })
-    }
-} */
 
 
 // searchResults
@@ -635,7 +442,6 @@ const searchResultsAction = (loggedInUserId, search) => {
 }
 
 export {
-    updateUserStatusAction,
     fetchLoggedInUserAction,
     updateLoggedInUserDataAction,
     fetchTimeLineUserAction,

@@ -46,10 +46,10 @@ function registerAction(userData) {
     return (dispatch) => {
         dispatch(ajaxBegin());
         return requester.post('/register', { ...userData }, (response) => {
-            if (response.success === true) {
-                dispatch(registerSuccess(response.message))
+            if (response.status === 200) {
+                dispatch(registerSuccess(response.data.message))
             } else {
-                dispatch(registerError(response.message))
+                dispatch(registerError(response.data.message))
             }
             dispatch(ajaxEnd());
         }).catch(err => {
@@ -59,15 +59,14 @@ function registerAction(userData) {
     }
 }
 
-function loginAction(username, password) {
+function loginAction(userEmail, password) {
     return (dispatch) => {
         dispatch(ajaxBegin());
-        return requester.post('/login', { username, password }, (response) => {
-            console.log("LOOK AT THIS: {response}");
+        return requester.post('/login', { userEmail, password }, (response) => {
             if (response.error) {
                 dispatch(loginError(' Incorrect credentials!'));
             } else {
-                saveToken(response)
+                saveToken(response.data)
                 dispatch(loginSuccess());
             }
             dispatch(ajaxEnd());
